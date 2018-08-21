@@ -1,0 +1,9 @@
+*.pyc
+*~
+*.html
+__pycache__
+myvenv
+gamebase
+db.sqlite3
+Thumbs.db
+desktop.ini
