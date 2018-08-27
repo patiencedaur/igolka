@@ -20,9 +20,9 @@ def fill_db():
     Fill the DB with all our games, using data from gameinfo.
     '''
 
-    def get_tuple(gd): # make tuple from game dict to feed it to the db easily, except mechanics - it will be stored separately
+    def get_tuple(gd): # make tuple from game dict to feed it to the db easily. mechanics is a string
         return (gd['title'], gd['id'], gd['player_num_min'], gd['player_num_max'],\
-                gd['playing_minutes'], gd['coco'], gd['url'],)
+                gd['playing_minutes'], gd['coco'], '; '.join(gd['mechanics'])[:-2], gd['url'],)
 
     conn = sqlite3.connect('db.sqlite3')
     cur = conn.cursor()
@@ -36,12 +36,10 @@ def fill_db():
 
     stmt = '''
     INSERT OR REPLACE INTO Games (title, id, player_num_min, player_num_max,
-    playing_minutes, coco, url)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''' #Make mechanics referencing another db? Make separate db for mechanics?
+    playing_minutes, coco, mechanics, url)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    '''
     cur.executemany(stmt, data_to_fill) #fill in all games
-
-    #stmt_mech = 'INSERT OR REPLACE INTO Games (mechanics) VALUES (?)'
 
     conn.commit()
     cur.close()
@@ -52,11 +50,8 @@ def print_db():
     cur = conn.cursor()
 
     print('Games:')
-    cur.execute('SELECT title, id, player_num_min, player_num_max, playing_minutes, coco,url FROM Games')
+    cur.execute('SELECT title, id, player_num_min, player_num_max, playing_minutes, coco, mechanics, url FROM Games')
     for row in cur:
         print(row)
 
     cur.close()
-
-fill_db()
-print_db()
