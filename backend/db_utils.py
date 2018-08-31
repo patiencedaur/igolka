@@ -1,12 +1,13 @@
 import sqlite3
 import gameinfo
 import bggapi_get
+from settings import *
 
 def create_db():
     '''
     Create an SQLite3 database.
     '''
-    conn = sqlite3.connect('db.sqlite3')
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     cur.execute('DROP TABLE IF EXISTS Games')
@@ -24,7 +25,7 @@ def fill_db():
         return (gd['title'], gd['id'], gd['player_num_min'], gd['player_num_max'],\
                 gd['playing_minutes'], gd['coco'], '; '.join(gd['mechanics'])[:-2], gd['url'],)
 
-    conn = sqlite3.connect('db.sqlite3')
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     all_games_dict = bggapi_get.get_game_dict() # ids and titles
@@ -46,7 +47,7 @@ def fill_db():
 
 def print_db():
 
-    conn = sqlite3.connect('db.sqlite3')
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     print('Games:')
@@ -55,3 +56,5 @@ def print_db():
         print(row)
 
     cur.close()
+
+print_db()
