@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div>
+  <form action="/search" method="post">
+    <p> Game Title: &nbsp;
+      <input name="name" placeholder="None" type="text"></p>
+    <p> Minimum Players: &nbsp;
+      <input name="playerMin" placeholder="None" type="text"></p>
+    <p> Maximum Players: &nbsp;
+      <input name="playerMax" placeholder="None" type="text"></p>
+    <p> Playing Time: &nbsp;
+        <input name="playingMinutes" placeholder="None" type="text"></p>
+    <p> PVP or Coop: &nbsp;
+        <select name="coco">
+          <option value=""></option>
+          <option value="Competitive">Competitive</option>
+          <option value="Cooperative">Cooperative</option>
+        </select></p>
+    <input type="submit" value="Search">
+  </form>
+</div>
+{% endblock %}

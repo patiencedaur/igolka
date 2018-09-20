@@ -68,5 +68,5 @@ def print_game_data(necessary_data): #takes a dict
         print(datum + ": " + str(necessary_data[datum]))
 
 
-#data = get_game_info(127398)
-#print_game_data(data)
+# data = get_game_info(127398)
+# print_game_data(data)
