@@ -10,11 +10,14 @@ class DatabaseInit:
         Create an SQLite3 database.
         '''
         conn = sqlite3.connect(DB_PATH)
-        with conn.cursor() as cur:
-            cur.execute('DROP TABLE IF EXISTS Games')
-            cur.execute('CREATE TABLE Games (title TEXT, id INTEGER, player_num_min INTEGER, player_num_max INTEGER,\
-                        playing_minutes INTEGER, coco TEXT, mechanics TEXT, url TEXT)')
-                        #coco = cooperative or competitive
+        cur = conn.cursor()
+
+        cur.execute('DROP TABLE IF EXISTS Games')
+        cur.execute('CREATE TABLE Games (title TEXT, id INTEGER, player_num_min INTEGER, player_num_max INTEGER,\
+                    playing_minutes INTEGER, coco TEXT, mechanics TEXT, url TEXT)')
+                    #coco = cooperative or competitive
+        print("Database dropped")
+        cur.close()
 
     def fill_db(self):
         '''
@@ -23,18 +26,21 @@ class DatabaseInit:
 
         def get_tuple(gd): # make tuple from game dict to feed it to the db easily. mechanics is a string
             return (gd['title'], gd['id'], gd['player_num_min'], gd['player_num_max'],\
-                    gd['playing_minutes'], gd['coco'], '; '.join(gd['mechanics'])[:-2], gd['url'],)
+                    gd['playing_minutes'], gd['coco'], '; '.join(gd['mechanics']), gd['url'],)
 
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
 
+        print("Getting titles and IDs from BGG API to fetch info...")
         all_games_dict = bggapi_get.get_game_dict() # ids and titles
         data_to_fill = []
 
-        for game_id in all_games_dict.keys(): #collect all data from all games to feed it to db
+        print("Collecting all games data from bgg-json.azurewebsites.net...")
+        for game_id in all_games_dict.keys(): #collect all data from all games to feed it to db, key=name
             one_game_dict = gameinfo.get_game_info(game_id)
             data_to_fill.append(get_tuple(one_game_dict))
 
+        print("Filling database...")
         stmt = '''
         INSERT OR REPLACE INTO Games (title, id, player_num_min, player_num_max,
         playing_minutes, coco, mechanics, url)
@@ -44,6 +50,7 @@ class DatabaseInit:
 
         conn.commit()
         cur.close()
+        print("Done!")
 
     def print_db(self):
 
@@ -68,13 +75,27 @@ class GetGames:
         # self.url = self.attrs[7]
 
     def get_by_title(self, game_title):
+        '''
+        Test function. Take a name and print the tuple with that game info
+        '''
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
         stmt = '''
         SELECT title, id, player_num_min, player_num_max, playing_minutes, coco, mechanics, url FROM Games
-            WHERE title = ?
+            WHERE title = ?;
         '''
-        cur.execute(stmt, game_title)
+        cur.execute(stmt, (game_title,))
+        #Print game info in console
         for row in cur:
-            print(row)
+            for i in range(len(row)):
+                print(row[i])
         cur.close()
+
+
+    def search_db(query):
+        '''
+        Takes a query of name, exact number of players, and playing time.
+        Searches the database.
+        Returns all incidences as a list of tuples, or returns nothing.
+        '''
+        pass

@@ -39,13 +39,13 @@ def get_game_info(game_id):
     data = page.json()
 
     necessary_data = {
-                'title': data['name'],
-                'id': data['gameId'],
-                'player_num_min': data['minPlayers'],
-                'player_num_max': data['maxPlayers'],
-                'playing_minutes': data['playingTime'],
-                'mechanics': data['mechanics'],
-                'coco': None,
+                'title': data.get('name'),
+                'id': data.get('gameId'),
+                'player_num_min': data.get('minPlayers'),
+                'player_num_max': data.get('maxPlayers'),
+                'playing_minutes': data.get('playingTime'),
+                'mechanics': data.get('mechanics'),
+                'coco': None, #will fill in later
                 'url': None, #will fill in later
     }
     #Cooperativity must be a separate value
@@ -55,7 +55,7 @@ def get_game_info(game_id):
     else:
         necessary_data['coco'] = 'Competitive'
 
-    #Add game url on BGG
+    #Add game url as on BGG site
     url_dict = create_url_dict()
     if data['name'] in url_dict.keys(): #check with the dictionary of urls
         necessary_data['url'] = url_dict[data['name']]
@@ -66,7 +66,3 @@ def get_game_info(game_id):
 def print_game_data(necessary_data): #takes a dict
     for datum in necessary_data:
         print(datum + ": " + str(necessary_data[datum]))
-
-
-# data = get_game_info(127398)
-# print_game_data(data)
