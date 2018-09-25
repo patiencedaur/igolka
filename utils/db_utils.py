@@ -1,6 +1,5 @@
 import sqlite3
-import gameinfo
-import bggapi_get
+import gameinfo, bggapi_get
 from settings import *
 
 class DatabaseInit:
@@ -80,10 +79,7 @@ class GetGames:
         '''
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
-        stmt = '''
-        SELECT title, id, player_num_min, player_num_max, playing_minutes, coco, mechanics, url FROM Games
-            WHERE title = ?;
-        '''
+        stmt = "SELECT * FROM Games WHERE title = ?;"
         cur.execute(stmt, (game_title,))
         #Print game info in console
         for row in cur:
@@ -92,10 +88,52 @@ class GetGames:
         cur.close()
 
 
-    def search_db(query):
+    def search_db(self, query):
         '''
-        Takes a query of name, exact number of players, and playing time.
+        Takes a query of name, exact number of players, playing time, and coco
+        (this is a dictionary).
         Searches the database.
         Returns all incidences as a list of tuples, or returns nothing.
         '''
-        pass
+        if not query:
+            print("Empty query")
+            return -1
+
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+
+        # Form a request to the db
+        stmt = "SELECT * FROM Games WHERE "
+        for key in query.keys():
+            if key == "player_num":
+                stmt = stmt + "player_num_max >= " + query[key] + " AND " +\
+                            "player_num_min <= " + query[key] + " AND "
+            elif key == "playing_minutes":
+                stmt = stmt + "playing_minutes >= " + str(int(query[key]) - 20) + " AND "
+                stmt = stmt + "playing_minutes <= " + str(int(query[key]) + 20) + " AND "
+            elif key == "coco":
+                stmt = stmt + key + " = \"" + query[key] + "\" AND "
+            else:
+                # protect against SQL injection
+                stmt = stmt + key + " = ? AND "
+
+        print("Retrieving suitable games...")
+
+        # Get data from request
+        if query.get("title"):
+            cur.execute(stmt[:-5], (query["title"],))
+        else:
+            cur.execute(stmt[:-5])
+
+        results = [] # a list of tuples
+
+        #Print in console
+        for row in cur:
+            results.append(row)
+            for i in range(len(row)):
+                print(row[i])
+            print()
+
+        cur.close()
+
+        return results

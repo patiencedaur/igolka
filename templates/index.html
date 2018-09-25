@@ -4,13 +4,11 @@
   <div>
   <form action="/search" method="post">
     <p> Game Title: &nbsp;
-      <input name="name" placeholder="None" type="text"></p>
-    <p> Minimum Players: &nbsp;
-      <input name="playerMin" placeholder="None" type="text"></p>
-    <p> Maximum Players: &nbsp;
-      <input name="playerMax" placeholder="None" type="text"></p>
-    <p> Playing Time: &nbsp;
-        <input name="playingMinutes" placeholder="None" type="text"></p>
+      <input name="title" placeholder="" type="text"></p>
+    <p> Number of Players: &nbsp;
+      <input name="playerNum" placeholder="2" type="number" min="1" max="14"></p>
+    <p> Playing Minutes: &nbsp;
+        <input name="playingMinutes" placeholder="30" type="number" min="30" max="240" step="30"></p>
     <p> PVP or Coop: &nbsp;
         <select name="coco">
           <option value=""></option>
@@ -19,5 +17,6 @@
         </select></p>
     <input type="submit" value="Search">
   </form>
+
 </div>
 {% endblock %}
