@@ -62,16 +62,6 @@ class DatabaseInit:
         cur.close()
 
 class GetGames:
-    def __init__(self):
-        self.attrs = ('title', 'id', 'player_num_min', 'player_num_max', 'playing_minutes', 'coco', 'mechanics', 'url')
-        # self.title = self.attrs[0]
-        # self.id = self.attrs[1]
-        # self.player_num_min = self.attrs[2]
-        # self.player_num_max = self.attrs[3]
-        # self.playing_minutes = self.attrs[4]
-        # self.coco = self.attrs[5]
-        # self.mechanics = self.attrs[6]
-        # self.url = self.attrs[7]
 
     def get_by_title(self, game_title):
         '''
@@ -109,13 +99,13 @@ class GetGames:
                 stmt = stmt + "player_num_max >= " + query[key] + " AND " +\
                             "player_num_min <= " + query[key] + " AND "
             elif key == "playing_minutes":
-                stmt = stmt + "playing_minutes >= " + str(int(query[key]) - 20) + " AND "
-                stmt = stmt + "playing_minutes <= " + str(int(query[key]) + 20) + " AND "
+                stmt = stmt + "playing_minutes >= " + str(int(query[key]) - 14) + " AND "
+                stmt = stmt + "playing_minutes <= " + str(int(query[key]) + 14) + " AND "
             elif key == "coco":
                 stmt = stmt + key + " = \"" + query[key] + "\" AND "
             else:
-                # protect against SQL injection
-                stmt = stmt + key + " = ? AND "
+                # it's a title or other arbitrary input. protect against SQL injection
+                stmt = stmt + key + " LIKE ?% AND "
 
         print("Retrieving suitable games...")
 

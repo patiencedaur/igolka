@@ -9,38 +9,38 @@ app.config['TESTING'] = True
 def index():
     return render_template("index.html")
 
-#Search results page
-@app.route("/gamekeeper")
-def gamekeeper():
-    return render_template("gamekeeper.html")
-
 #Actual search engine
 @app.route("/search", methods=["POST"])
 def search():
-
     try:
         query = {}
-        # Forming a query to the database
-        if len(request.form.get("title")) != 0:
-            query["title"] = request.form.get("title")
-        query["player_num"] = request.form.get("playerNum"))
-        query["playing_minutes"] = request.form.get("playingMinutes")
-        query["coco"] = request.form.get("coco")
+        search_results = []
+        # Forming a query to the database and a redirect address
+        for req in request.form:
+            if len(request.form.get(req)) != 0:
+                query[req] = to_ascii(request.form.get(req))
 
         if not query:
             print("Looks like the query is empty... Try again")
             return redirect("/")
 
-        #here comes the code that searches in the db...
+        search_results = GetGames().search_db(query)
 
-        return redirect("/gamekeeper")
+        return render_template("gamekeeper.html", search_results=search_results)
 
     except:
         return render_template("error.html")
 
     finally:
+        print("Query: ")
         print(query)
+        print("Search results: ")
+        print(search_results)
 
+
+def to_ascii(s):
+    '''Convert string to ascii to search in the db.'''
+    return s.encode('raw_unicode_escape')
 
 
 # Helps to check if a number was entered (or field is empty)

@@ -1,13 +1,29 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  You searched for something! (Well, not really.)
+<h1>Search results</h1>
+    {% if search_results|length > 0 %}
+        {% for result in search_results %}
 
-  <!-- here comes the code displaying all search results
-        {% for result in results %}
-            <div class="result">{{ result[0] }} <br>
-                  {{ result[2] }}<br>
-                  {{ result[3] }}</div>
-        {% endfor %}-->
+            <div class="result">
+              <b>{{ result[0] }}</b> <br>
 
+                {% if result[5] == 'Competitive'%}
+                  PVP<br>
+                {% elif result[5] == 'Cooperative'%}
+                Coop<br>
+                {% endif %}
+
+                {% if result[2] == result[3] %} {{result[2]}}
+                {% else %} {{ result[2] }}-{{ result[3]}} {% endif %}
+                players<br>
+              Playing time: {{ result[4] }} minutes<br>
+              Mechanics: {{ result[6] }}
+
+              </div>
+        {% endfor %}
+      {% else %}
+      <p>None found, sorry.</p>
+      <p><a href="javascript:history.back()">Back</a></p>
+      {% endif %}
 {% endblock %}
