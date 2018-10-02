@@ -105,13 +105,14 @@ class GetGames:
                 stmt = stmt + key + " = \"" + query[key] + "\" AND "
             else:
                 # it's a title or other arbitrary input. protect against SQL injection
-                stmt = stmt + key + " LIKE ?% AND "
+                stmt = stmt + key + " LIKE ? AND "
 
         print("Retrieving suitable games...")
 
         # Get data from request
         if query.get("title"):
-            cur.execute(stmt[:-5], (query["title"],))
+            title_like = "%" + query["title"] + "%"
+            cur.execute(stmt[:-5], (title_like,))
         else:
             cur.execute(stmt[:-5])
 
