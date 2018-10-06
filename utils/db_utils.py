@@ -24,8 +24,12 @@ class DatabaseInit:
         '''
 
         def get_tuple(gd): # make tuple from game dict to feed it to the db easily. mechanics is a string
-            return (gd['title'], gd['id'], gd['player_num_min'], gd['player_num_max'],\
-                    gd['playing_minutes'], gd['coco'], '; '.join(gd['mechanics']), gd['url'],)
+            if gd.get('mechanics'):
+                mechanics = '; '.join(gd.get('mechanics'))
+            else:
+                mechanics = ''
+            return (gd.get('title'), gd.get('id'), gd.get('player_num_min'), gd.get('player_num_max'),\
+                    gd.get('playing_minutes'), gd.get('coco'), mechanics, gd.get('url'),)
 
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
@@ -37,7 +41,8 @@ class DatabaseInit:
         print("Collecting all games data from bgg-json.azurewebsites.net...")
         for game_id in all_games_dict.keys(): #collect all data from all games to feed it to db, key=name
             one_game_dict = gameinfo.get_game_info(game_id)
-            data_to_fill.append(get_tuple(one_game_dict))
+            if one_game_dict:
+                data_to_fill.append(get_tuple(one_game_dict))
 
         print("Filling database...")
         stmt = '''
@@ -52,7 +57,9 @@ class DatabaseInit:
         print("Done!")
 
     def print_db(self):
-
+        '''
+        Prints db in the terminal. A function for debugging.
+        '''
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
         print('Games:')
@@ -60,6 +67,19 @@ class DatabaseInit:
         for row in cur:
             print(row)
         cur.close()
+
+    def drop_sync(self):
+        import time
+        start_time = time.time()
+
+        print("Committing droppage and syncing...")
+        self.create_db()
+        self.fill_db()
+        time_elapsed = int(time.time() - start_time)
+        print("Elapsed " + str(time_elapsed) + " seconds")
+
+        return time_elapsed
+
 
 class GetGames:
 

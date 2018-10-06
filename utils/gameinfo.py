@@ -38,7 +38,11 @@ def get_game_info(game_id):
     page = requests.get(url)
     data = page.json()
 
-    necessary_data = {
+    #See what we are getting from the internet
+
+    if data.get("name"): #protection against empty entries
+        print("Collecting " + str(data.get('name')))
+        necessary_data = {
                 'title': data.get('name'),
                 'id': data.get('gameId'),
                 'player_num_min': data.get('minPlayers'),
@@ -47,20 +51,21 @@ def get_game_info(game_id):
                 'mechanics': data.get('mechanics'),
                 'coco': None, #will fill in later
                 'url': None, #will fill in later
-    }
-    #Cooperativity must be a separate value
-    if 'Cooperative Play' in data['mechanics']:
-        necessary_data['mechanics'].remove('Cooperative Play')
-        necessary_data['coco'] = 'Cooperative'
-    else:
-        necessary_data['coco'] = 'Competitive'
+        }
 
-    #Add game url as on BGG site
-    url_dict = create_url_dict()
-    if data['name'] in url_dict.keys(): #check with the dictionary of urls
-        necessary_data['url'] = url_dict[data['name']]
+        #Cooperativity must be a separate value
+        if 'Cooperative Play' in data.get('mechanics'):
+            necessary_data['mechanics'].remove('Cooperative Play')
+            necessary_data['coco'] = 'Cooperative'
+        else:
+            necessary_data['coco'] = 'Competitive'
 
-    return necessary_data
+        #Add game url as on BGG site
+        url_dict = create_url_dict()
+        if data.get("name") in url_dict.keys(): #check with the dictionary of urls
+            necessary_data['url'] = url_dict[data.get('name')]
+
+        return necessary_data
 
 
 def print_game_data(necessary_data): #takes a dict

@@ -6,8 +6,10 @@ from db_utils import GetGames, DatabaseInit
 # d.print_db()
 # print()
 
-g = GetGames()
+# g = GetGames()
 # g.get_by_title('Azul')
 
-query = {'player_num': '2', 'coco': ''}
-g.search_db(query)
+# query = {'player_num': '2', 'coco': ''}
+# g.search_db(query)
+
+DatabaseInit().drop_sync()
