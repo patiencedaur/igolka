@@ -1,10 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
+  <h1>Patience's Gamekeeper</h1>
   <div>
   <form action="/search" method="post">
-    <p> Game Title: &nbsp;
-      <input name="title" placeholder="" type="text"></p>
     <p> Number of Players: &nbsp;
       <input name="player_num" placeholder="" type="number" min="1" max="14"></p>
     <p> Playing Minutes: &nbsp;
@@ -12,9 +11,11 @@
     <p> PVP or Coop: &nbsp;
         <select name="coco">
           <option value=""></option>
-          <option value="Competitive">Competitive</option>
-          <option value="Cooperative">Cooperative</option>
+          <option value="Competitive">PVP</option>
+          <option value="Cooperative">Coop</option>
         </select></p>
+        <p> You can also search by game title:<br>
+          <input name="title" placeholder="" type="text"></p>
     <input type="submit" value="Search">
   </form>
 

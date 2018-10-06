@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Search results</h1>
+<h1 class="result">Search results</h1>
     {% if search_results|length > 0 %}
         {% for result in search_results %}
 
@@ -24,6 +24,6 @@
         {% endfor %}
       {% else %}
       <p>None found, sorry.</p>
-      <p><a href="javascript:history.back()">Back</a></p>
       {% endif %}
+      <p><a href="javascript:history.back()">&lt;&lt; Back</a></p>
 {% endblock %}
