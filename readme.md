@@ -1,4 +1,4 @@
-### Darky & Patience's Board Games Database ###
+### Igolka - Darky & Patience's Board Games Database ###
 
 This project lists boardgames that we have in our home, including number of players, mechanics, playing time, etc.
 
