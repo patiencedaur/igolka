@@ -18,7 +18,7 @@ def search():
         # Forming a query to the database and a redirect address
         for req in request.form:
             if len(request.form.get(req)) != 0:
-                query[req] = to_ascii(request.form.get(req))
+                query[req] = request.form.get(req)
 
         if not query:
             print("Looks like the query is empty... Try again")
@@ -38,6 +38,6 @@ def search():
     #     print(search_results)
 
 
-def to_ascii(s):
-    '''Convert string to ascii to search in the db.'''
-    return s.encode('raw_unicode_escape')
+# def to_ascii(s):
+#     '''Convert string to ascii to search in the db.'''
+#     return s.encode('raw_unicode_escape')

@@ -1,4 +1,4 @@
-import gameinfo
+from gameinfo import GameInfo
 
-data = gameinfo.get_game_info(199561)
-gameinfo.print_game_data(data)
+data = GameInfo().get_game_info(199561)
+GameInfo().print_game_data(data)

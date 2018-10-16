@@ -2,8 +2,7 @@
 *~
 *.html
 __pycache__
-myvenv
+venv
 db.sqlite3
 Thumbs.db
 desktop.ini
-bugs.txt
