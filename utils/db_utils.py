@@ -1,6 +1,13 @@
+import os
+import sys
+sys.path.append(os.path.dirname(__file__)) #Resolve import problems
+
 import sqlite3
-import gameinfo, bggapi_get
-from settings import *
+import bggapi_get
+from gameinfo import GameInfo
+
+parentDirectory = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+DB_PATH = os.path.join(parentDirectory, 'db.sqlite3') # Where the database lives
 
 class DatabaseInit:
 
@@ -40,7 +47,7 @@ class DatabaseInit:
 
         print("Collecting all games data from bgg-json.azurewebsites.net...")
         for game_id in all_games_dict.keys(): #collect all data from all games to feed it to db, key=name
-            one_game_dict = gameinfo.get_game_info(game_id)
+            one_game_dict = GameInfo().get_game_info(game_id)
             if one_game_dict:
                 data_to_fill.append(get_tuple(one_game_dict))
 
