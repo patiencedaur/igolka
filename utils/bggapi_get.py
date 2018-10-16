@@ -1,7 +1,7 @@
-from boardgamegeek import BGGClient
+from boardgamegeek import BoardGameGeek
 
-bgg = BGGClient()
-my_col = bgg.collection('DarkyLondon', exclude_subtype='boardgameexpansion')
+bgg = BoardGameGeek()
+my_col = bgg.collection('DarkyLondon')
 games = my_col.items
 
 def get_game_dict():

@@ -1,5 +1,5 @@
 import sqlite3
-import gameinfo, bggapi_get
+from . import gameinfo, bggapi_get
 from settings import *
 
 class DatabaseInit:

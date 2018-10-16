@@ -1,4 +1,4 @@
-import bggapi_get
+from . import bggapi_get
 import requests
 from bs4 import BeautifulSoup
 
