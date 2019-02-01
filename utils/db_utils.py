@@ -13,7 +13,7 @@ class DatabaseInit:
 
     def create_db(self):
         '''
-        Create an SQLite3 database.
+        Create an SQLite3 database. Drop the old one.
         '''
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
@@ -61,7 +61,8 @@ class DatabaseInit:
 
         conn.commit()
         cur.close()
-        print("Done!")
+        print("Done! Total: " + str(len(data_to_fill)) + " games")
+
 
     def print_db(self):
         '''
@@ -75,6 +76,22 @@ class DatabaseInit:
             print(row)
         cur.close()
 
+############
+# Maintenance functions to update the db
+############
+
+    def sync(self):
+        import time
+        start_time = time.time()
+
+        print("Syncing...")
+        self.fill_db()
+        time_elapsed = int(time.time() - start_time)
+        print("Elapsed " + str(time_elapsed) + " seconds")
+
+        return time_elapsed
+
+
     def drop_sync(self):
         import time
         start_time = time.time()
@@ -87,6 +104,7 @@ class DatabaseInit:
 
         return time_elapsed
 
+############
 
 class GetGames:
 
