@@ -29,15 +29,6 @@ class DatabaseInit:
         '''
         Fill the DB with all our games, using data from gameinfo.
         '''
-
-        def get_tuple(gd): # make tuple from game dict to feed it to the db easily. mechanics is a string
-            if gd.get('mechanics'):
-                mechanics = '; '.join(gd.get('mechanics'))
-            else:
-                mechanics = ''
-            return (gd.get('title'), gd.get('id'), gd.get('player_num_min'), gd.get('player_num_max'),\
-                    gd.get('playing_minutes'), gd.get('coco'), mechanics, gd.get('url'),)
-
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
 
@@ -49,7 +40,7 @@ class DatabaseInit:
         for game_id in all_games_dict.keys(): #collect all data from all games to feed it to db, key=name
             one_game_dict = GameInfo().get_game_info(game_id)
             if one_game_dict:
-                data_to_fill.append(get_tuple(one_game_dict))
+                data_to_fill.append(self.get_tuple(one_game_dict))
 
         print("Filling database...")
         stmt = '''
@@ -64,6 +55,19 @@ class DatabaseInit:
         print("Done! Total: " + str(len(data_to_fill)) + " games")
 
 
+    def get_tuple(self, gd):
+        '''
+        Make tuple from game dict to feed it to the db easily.
+        Mechanics is a string
+        '''
+        if gd.get('mechanics'):
+            mechanics = '; '.join(gd.get('mechanics'))
+        else:
+            mechanics = ''
+        return (gd.get('title'), gd.get('id'), gd.get('player_num_min'), gd.get('player_num_max'),\
+                gd.get('playing_minutes'), gd.get('coco'), mechanics, gd.get('url'),)
+
+
     def print_db(self):
         '''
         Prints db in the terminal. A function for debugging.
@@ -76,6 +80,56 @@ class DatabaseInit:
             print(row)
         cur.close()
 
+
+    def titles_in_collection(self):
+        '''
+        Returns a simple list of game names in collection.
+        '''
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute('SELECT title FROM Games')
+        current_collection = []
+        for row in cur:
+            current_collection.append(row)
+        cur.close()
+        return [ x[0] for x in current_collection ]
+
+
+    def fill_in_missing(self):
+        '''
+        An alternative to fill_db().
+        Retrieve from BGG only the games missing in the db.
+        This reduces the load on the BGG and BGG-JSON servers.
+        '''
+        current_collection = self.titles_in_collection()
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+
+        print("Getting titles and IDs from BGG API to fetch info...")
+        all_games_dict = bggapi_get.get_game_dict() # ids and titles
+        data_to_fill = []
+
+        print("Collecting missing/new games data from bgg-json.azurewebsites.net...")
+        for game_id in all_games_dict.keys(): #collect all data from all games to feed it to db, key=name
+            if all_games_dict[game_id] not in current_collection: # remove the games already in collection
+                one_game_dict = GameInfo().get_game_info(game_id)
+                if one_game_dict:
+                    data_to_fill.append(self.get_tuple(one_game_dict))
+
+        print("Filling database...")
+        stmt = '''
+        INSERT OR REPLACE INTO Games (title, id, player_num_min, player_num_max,
+        playing_minutes, coco, mechanics, url)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        '''
+        cur.executemany(stmt, data_to_fill) #fill in all games
+
+        conn.commit()
+        cur.close()
+        print("Done! Total: " + str(len(data_to_fill)) + " new games retrieved")
+
+
+
 ############
 # Maintenance functions to update the db
 ############
@@ -85,7 +139,7 @@ class DatabaseInit:
         start_time = time.time()
 
         print("Syncing...")
-        self.fill_db()
+        self.fill_in_missing()
         time_elapsed = int(time.time() - start_time)
         print("Elapsed " + str(time_elapsed) + " seconds")
 

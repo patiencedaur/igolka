@@ -19,6 +19,13 @@ def test3():
 def test4():
     DatabaseInit().drop_sync()
 
+def test5():
+    DatabaseInit().fill_in_missing()
+
+def test6():
+    titles = DatabaseInit().titles_in_collection()
+    print(titles)
+
 if __name__ == "__main__":
 
     print("You can perform the following database tests:")
@@ -26,12 +33,14 @@ if __name__ == "__main__":
     print("(2) Get game by title (defaults to Azul)")
     print("(3) Search by player_num = 2 and coco = 'Competitive'")
     print("(4) Drop and sync")
+    print("(5) Smart database fill")
+    print("(6) Get only titles in the local collection")
 
-    prompt = input("Enter number of test to perform: ")
+    prompt = input("Enter the number of test to perform: ")
 
     test_name = "test" + prompt
 
     try:
         eval(test_name + "()")
-    except:
+    except NameError:
         print("Invalid test id.")
